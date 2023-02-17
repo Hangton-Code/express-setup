@@ -1,2 +1,1 @@
--- UPDATE users set refreshTokens = '["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJnb29nbGUtb2F1dGgyfDEwNjU2OTg1MDEwMTQxMjE2NzAwNSIsInVzYWdlIjoicmVmcmVzaCB0b2tlbiIsImlhdCI6MTY3NjYxNDM5NSwiZXhwIjoxNjg0MzkwMzk1fQ.KvfGZFBR-KZX_C0V0c_npruwzZ6aV4qjO4iWz4c3o7I"]' where id = 'google-oauth2|106569850101412167005';
 SELECT * from users;
