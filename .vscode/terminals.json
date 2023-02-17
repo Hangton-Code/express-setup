@@ -1,0 +1,15 @@
+{
+  "autorun": true,
+  "autokill": true,
+  "terminals": [
+    {
+      "name": "Typescript",
+      "commands": ["tsc -w"]
+    },
+    {
+      "name": "Server",
+      "split": "Typescript",
+      "commands": ["yarn dev"]
+    }
+  ]
+}
