@@ -34,7 +34,7 @@ async function CallbackController(req: Request, res: Response) {
   }
 
   // find or create
-  const [user, created] = await User.findOrCreate({
+  const [user] = await User.findOrCreate({
     where: { id: auth0User.sub },
     defaults: {
       id: auth0User.sub,
@@ -64,7 +64,7 @@ async function CallbackController(req: Request, res: Response) {
 
   // return
   res.redirect(
-    `${process.env.CLIENT_URL}/auth/token?refresh_token=${newRefreshToken}`
+    `${process.env.CLIENT_URL}/auth/callback?refresh_token=${newRefreshToken}`
   );
 }
 

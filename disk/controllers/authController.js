@@ -36,7 +36,7 @@ function CallbackController(req, res) {
             return res.redirect(`${VERIFICATION_EMAIL_URL}?veToken=${veToken}`);
         }
         // find or create
-        const [user, created] = yield User_1.User.findOrCreate({
+        const [user] = yield User_1.User.findOrCreate({
             where: { id: auth0User.sub },
             defaults: {
                 id: auth0User.sub,
@@ -59,7 +59,7 @@ function CallbackController(req, res) {
             refreshTokens: [...refreshTokens, newRefreshToken],
         });
         // return
-        res.redirect(`${process.env.CLIENT_URL}/auth/token?refresh_token=${newRefreshToken}`);
+        res.redirect(`${process.env.CLIENT_URL}/auth/callback?refresh_token=${newRefreshToken}`);
     });
 }
 exports.CallbackController = CallbackController;
