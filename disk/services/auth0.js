@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendAuth0VerificationEmail = exports.getAuth0UserInfo = exports.getAuth0LogInUrl = void 0;
+exports.sendAuth0VerificationEmail = exports.getAuth0UserInfo = void 0;
 require("dotenv").config();
 const axios_1 = __importDefault(require("axios"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -23,18 +23,6 @@ const AUTH0_DOMAIN = process.env.AUTH0_DOMAIN;
 const AUTH0_CLIENT_ID = process.env.AUTH0_CLIENT_ID;
 const AUTH0_CLIENT_SECRET = process.env.AUTH0_CLIENT_SECRET;
 const AUTH0_REDIRECT_URI = process.env.AUTH0_REDIRECT_URI;
-const getAuth0LogInUrl = () => {
-    const params = new URLSearchParams({
-        response_type: "code",
-        client_id: AUTH0_CLIENT_ID,
-        redirect_uri: AUTH0_REDIRECT_URI,
-        scope: "profile email openid",
-        prompt: "login", // to require user to field in the form every time login (dismiss the SSO)
-    }).toString();
-    const url = `https://${AUTH0_DOMAIN}/authorize?${params}`;
-    return url;
-};
-exports.getAuth0LogInUrl = getAuth0LogInUrl;
 function getAuth0UserInfo(code) {
     return __awaiter(this, void 0, void 0, function* () {
         // get id token to the user profile by code returned

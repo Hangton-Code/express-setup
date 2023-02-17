@@ -11,19 +11,19 @@ const AUTH0_CLIENT_ID = process.env.AUTH0_CLIENT_ID as string;
 const AUTH0_CLIENT_SECRET = process.env.AUTH0_CLIENT_SECRET as string;
 const AUTH0_REDIRECT_URI = process.env.AUTH0_REDIRECT_URI as string;
 
-const getAuth0LogInUrl = () => {
-  const params = new URLSearchParams({
-    response_type: "code",
-    client_id: AUTH0_CLIENT_ID,
-    redirect_uri: AUTH0_REDIRECT_URI,
-    scope: "profile email openid",
-    prompt: "login", // to require user to field in the form every time login (dismiss the SSO)
-  }).toString();
+// const getAuth0LogInUrl = () => {
+//   const params = new URLSearchParams({
+//     response_type: "code",
+//     client_id: AUTH0_CLIENT_ID,
+//     redirect_uri: AUTH0_REDIRECT_URI,
+//     scope: "profile email openid",
+//     prompt: "login", // to require user to field in the form every time login (dismiss the SSO)
+//   }).toString();
 
-  const url = `https://${AUTH0_DOMAIN}/authorize?${params}`;
+//   const url = `https://${AUTH0_DOMAIN}/authorize?${params}`;
 
-  return url;
-};
+//   return url;
+// };
 
 type Auth0UserInfo = {
   sub: string;
@@ -114,4 +114,4 @@ async function sendAuth0VerificationEmail(userId: string) {
   });
 }
 
-export { getAuth0LogInUrl, getAuth0UserInfo, sendAuth0VerificationEmail };
+export { getAuth0UserInfo, sendAuth0VerificationEmail };
