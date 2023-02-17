@@ -16,21 +16,19 @@ const errorHandler_1 = require("../helpers/errorHandler");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = require("../models/User");
 const JWT_ACCESS_TOKEN_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET;
-function requiredAuth(req, res, next) {
+const requiredAuth = (0, errorHandler_1.use)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    return __awaiter(this, void 0, void 0, function* () {
-        const access_token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
-        if (!access_token)
-            throw new errorHandler_1.APIError("Unauthorizated", {
-                statusCode: 401,
-            });
-        const { userId } = jsonwebtoken_1.default.verify(access_token, JWT_ACCESS_TOKEN_SECRET);
-        req.user = yield User_1.User.findOne({
-            where: {
-                id: userId,
-            },
+    const access_token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
+    if (!access_token)
+        throw new errorHandler_1.APIError("Unauthorizated", {
+            statusCode: 401,
         });
-        next();
+    const { userId } = jsonwebtoken_1.default.verify(access_token, JWT_ACCESS_TOKEN_SECRET);
+    req.user = yield User_1.User.findOne({
+        where: {
+            id: userId,
+        },
     });
-}
+    next();
+}));
 exports.default = requiredAuth;
