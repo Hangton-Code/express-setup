@@ -3,6 +3,7 @@ require("dotenv").config();
 import sequelize from "./utils/sequelize";
 import authRouter from "./routes/authRoute";
 import { errorHandler } from "./helpers/errorHandler";
+import cors from "cors"
 
 // database
 sequelize.sync().then(() => {
@@ -11,6 +12,7 @@ sequelize.sync().then(() => {
 
 // express config
 const app = express();
+app.use(cors())
 app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use(errorHandler);
