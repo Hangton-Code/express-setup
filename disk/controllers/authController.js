@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VerificationEmailController = exports.RefreshTokenController = exports.CallbackController = void 0;
+exports.VerificationEmailController = exports.RefreshTokenController = exports.LogOutController = exports.CallbackController = void 0;
 const User_1 = require("../models/User");
 const auth0_1 = require("../services/auth0");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -20,7 +20,7 @@ const errorHandler_1 = require("../helpers/errorHandler");
 const JWT_REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_TOKEN_SECRET;
 const JWT_ACCESS_TOKEN_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET;
 const JWT_VE_TOKEN_SECRET = process.env.JWT_VE_TOKEN_SECRET; // ve stands for "verification email"
-const VERIFICATION_EMAIL_URL = `${process.env.CLIENT_URL}/auth/verification_email`;
+const EMAIL_VERIFICATION_URL = `${process.env.CLIENT_URL}/auth/email_verification`;
 function CallbackController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const code = req.query.code;
@@ -29,11 +29,12 @@ function CallbackController(req, res) {
         if (!auth0User.email_verified) {
             const veToken = jsonwebtoken_1.default.sign({
                 userId: auth0User.sub,
+                email: auth0User.email,
                 usage: "verification email (sending) token",
             }, JWT_VE_TOKEN_SECRET, {
                 expiresIn: 60 * 60, //  1 hour
             });
-            return res.redirect(`${VERIFICATION_EMAIL_URL}?veToken=${veToken}`);
+            return res.redirect(`${EMAIL_VERIFICATION_URL}?veToken=${veToken}`);
         }
         // find or create
         const [user] = yield User_1.User.findOrCreate({
@@ -109,6 +110,25 @@ function RefreshTokenController(req, res) {
     });
 }
 exports.RefreshTokenController = RefreshTokenController;
+function LogOutController(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const refreshToken = req.body.refreshToken;
+        const { userId } = jsonwebtoken_1.default.verify(refreshToken, JWT_REFRESH_TOKEN_SECRET);
+        const user = yield User_1.User.findOne({
+            where: {
+                id: userId,
+            },
+        });
+        if (!user)
+            throw new errorHandler_1.APIError("Invalid User");
+        const refreshTokens = user.getDataValue("refreshTokens");
+        yield user.update({
+            refreshTokens: refreshTokens.filter((v) => v !== refreshToken),
+        });
+        res.end();
+    });
+}
+exports.LogOutController = LogOutController;
 function VerificationEmailController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const veToken = req.body.veToken;

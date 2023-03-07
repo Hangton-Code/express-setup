@@ -1,9 +1,10 @@
 import express from "express";
 require("dotenv").config();
 import sequelize from "./utils/sequelize";
-import authRouter from "./routes/authRoute";
+import authRoute from "./routes/authRoute";
+import profileRoute from "./routes/profileRoute";
 import { errorHandler } from "./helpers/errorHandler";
-import cors from "cors"
+import cors from "cors";
 
 // database
 sequelize.sync().then(() => {
@@ -12,9 +13,10 @@ sequelize.sync().then(() => {
 
 // express config
 const app = express();
-app.use(cors())
+app.use(cors());
 app.use(express.json());
-app.use("/api/auth", authRouter);
+app.use("/api/auth", authRoute);
+app.use("/api/profile", profileRoute);
 app.use(errorHandler);
 
 // express listen

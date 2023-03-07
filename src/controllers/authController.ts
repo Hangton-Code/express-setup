@@ -10,7 +10,7 @@ import { APIError } from "../helpers/errorHandler";
 const JWT_REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_TOKEN_SECRET as string;
 const JWT_ACCESS_TOKEN_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET as string;
 const JWT_VE_TOKEN_SECRET = process.env.JWT_VE_TOKEN_SECRET as string; // ve stands for "verification email"
-const VERIFICATION_EMAIL_URL = `${process.env.CLIENT_URL}/auth/verification_email`;
+const EMAIL_VERIFICATION_URL = `${process.env.CLIENT_URL}/auth/email_verification`;
 
 async function CallbackController(req: Request, res: Response) {
   const code = req.query.code as string;
@@ -22,6 +22,7 @@ async function CallbackController(req: Request, res: Response) {
     const veToken = jwt.sign(
       {
         userId: auth0User.sub,
+        email: auth0User.email,
         usage: "verification email (sending) token",
       },
       JWT_VE_TOKEN_SECRET,
@@ -30,7 +31,7 @@ async function CallbackController(req: Request, res: Response) {
       }
     );
 
-    return res.redirect(`${VERIFICATION_EMAIL_URL}?veToken=${veToken}`);
+    return res.redirect(`${EMAIL_VERIFICATION_URL}?veToken=${veToken}`);
   }
 
   // find or create
@@ -128,6 +129,28 @@ async function RefreshTokenController(req: Request, res: Response) {
   });
 }
 
+async function LogOutController(req: Request, res: Response) {
+  const refreshToken = req.body.refreshToken;
+
+  const { userId } = jwt.verify(refreshToken, JWT_REFRESH_TOKEN_SECRET) as {
+    userId: string;
+  };
+
+  const user = await User.findOne({
+    where: {
+      id: userId,
+    },
+  });
+  if (!user) throw new APIError("Invalid User");
+
+  const refreshTokens = user.getDataValue("refreshTokens");
+  await user.update({
+    refreshTokens: refreshTokens.filter((v) => v !== refreshToken),
+  });
+
+  res.end();
+}
+
 async function VerificationEmailController(req: Request, res: Response) {
   const veToken = req.body.veToken as string;
 
@@ -142,6 +165,7 @@ async function VerificationEmailController(req: Request, res: Response) {
 
 export {
   CallbackController,
+  LogOutController,
   RefreshTokenController,
   VerificationEmailController,
 };

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { body, query } from "express-validator";
 import {
   CallbackController,
+  LogOutController,
   RefreshTokenController,
   VerificationEmailController,
 } from "../controllers/authController";
@@ -19,6 +20,12 @@ router.get(
   use(CallbackController)
 );
 router.post(
+  "/log_out",
+  body("refreshToken").isJWT(),
+  validationHandler,
+  use(LogOutController)
+);
+router.post(
   "/refresh_token",
   body("refreshToken").isJWT(),
   validationHandler,
@@ -30,8 +37,5 @@ router.post(
   validationHandler,
   use(VerificationEmailController)
 );
-router.get("/info", requiredAuth, (req, res) => {
-  res.json({ ...req.user.toJSON(), refreshTokens: [] } as UserType);
-});
 
 export default router;
