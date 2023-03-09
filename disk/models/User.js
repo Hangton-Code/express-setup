@@ -14,16 +14,6 @@ User.init({
         type: sequelize_1.DataTypes.STRING,
         primaryKey: true,
     },
-    email: {
-        type: sequelize_1.DataTypes.STRING,
-    },
-    avatar_url: {
-        type: sequelize_1.DataTypes.TEXT,
-        defaultValue: "default",
-    },
-    name: {
-        type: sequelize_1.DataTypes.STRING,
-    },
     refreshTokens: {
         type: sequelize_1.DataTypes.JSON,
         defaultValue: [],

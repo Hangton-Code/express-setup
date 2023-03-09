@@ -3,9 +3,6 @@ import sequelize from "../utils/sequelize";
 
 type UserType = {
   id: string;
-  email: string;
-  avatar_url: string;
-  name: string;
   refreshTokens: string[];
   createdAt?: string;
   updatedAt?: string;
@@ -20,16 +17,6 @@ User.init(
     id: {
       type: DataTypes.STRING,
       primaryKey: true,
-    },
-    email: {
-      type: DataTypes.STRING,
-    },
-    avatar_url: {
-      type: DataTypes.TEXT,
-      defaultValue: "default",
-    },
-    name: {
-      type: DataTypes.STRING,
     },
     refreshTokens: {
       type: DataTypes.JSON,

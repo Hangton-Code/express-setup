@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { User } from "../models/User";
 import {
-  getAuth0UserInfo,
+  getAuth0UserInfoByCode,
   sendAuth0VerificationEmail,
 } from "../services/auth0";
 import jwt from "jsonwebtoken";
@@ -15,7 +15,7 @@ const EMAIL_VERIFICATION_URL = `${process.env.CLIENT_URL}/auth/email_verificatio
 async function CallbackController(req: Request, res: Response) {
   const code = req.query.code as string;
 
-  const auth0User = await getAuth0UserInfo(code);
+  const auth0User = await getAuth0UserInfoByCode(code);
 
   // if email is not verified
   if (!auth0User.email_verified) {
@@ -39,9 +39,6 @@ async function CallbackController(req: Request, res: Response) {
     where: { id: auth0User.sub },
     defaults: {
       id: auth0User.sub,
-      avatar_url: auth0User.picture,
-      email: auth0User.email,
-      name: auth0User.name,
       refreshTokens: [],
     },
   });

@@ -11,9 +11,6 @@ const profileController_1 = require("../controllers/profileController");
 const multer_1 = __importDefault(require("../utils/multer"));
 const errorHandler_1 = require("../helpers/errorHandler");
 const router = (0, express_1.Router)();
-router.get("/me", requiredAuth_1.default, (req, res) => {
-    res.json(Object.assign(Object.assign({}, req.user.toJSON()), { refreshTokens: [] }));
-});
 router.patch("/edit", requiredAuth_1.default, (0, express_validator_1.body)("name")
     .isString()
     .isLength({

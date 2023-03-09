@@ -13,6 +13,12 @@ import { UserType } from "../models/User";
 
 const router = Router();
 
+router.get("/info", requiredAuth, (req, res) => {
+  res.json({
+    user: req.user,
+    profile: req.userProfile,
+  });
+});
 router.get(
   "/callback",
   query("code").isString(),

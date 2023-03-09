@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const errorHandler_1 = require("../helpers/errorHandler");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = require("../models/User");
+const auth0_1 = require("../utils/auth0");
+const redis_1 = __importDefault(require("../utils/redis"));
 const JWT_ACCESS_TOKEN_SECRET = process.env.JWT_ACCESS_TOKEN_SECRET;
 const requiredAuth = (0, errorHandler_1.use)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
@@ -29,6 +31,29 @@ const requiredAuth = (0, errorHandler_1.use)((req, res, next) => __awaiter(void 
             id: userId,
         },
     });
+    const redisKey = `user-profile|${userId}`;
+    req.userProfile = yield redis_1.default
+        .get(redisKey)
+        .then((dataString) => __awaiter(void 0, void 0, void 0, function* () {
+        if (dataString)
+            return JSON.parse(dataString);
+        const auth0UserInfo = (yield auth0_1.auth0ManagementClient.getUser({
+            id: userId,
+        }));
+        const profile = {
+            created_at: auth0UserInfo.created_at,
+            email: auth0UserInfo.email,
+            name: auth0UserInfo.name,
+            nickname: auth0UserInfo.nickname,
+            picture: auth0UserInfo.picture,
+            updated_at: auth0UserInfo.updated_at,
+        };
+        yield redis_1.default.set(redisKey, JSON.stringify(profile), {
+            // in second
+            EX: 30 * 60,
+        });
+        return profile;
+    }));
     next();
 }));
 exports.default = requiredAuth;

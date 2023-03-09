@@ -7,8 +7,15 @@ const express_1 = require("express");
 const express_validator_1 = require("express-validator");
 const authController_1 = require("../controllers/authController");
 const errorHandler_1 = require("../helpers/errorHandler");
+const requiredAuth_1 = __importDefault(require("../middlewares/requiredAuth"));
 const validationHandler_1 = __importDefault(require("../middlewares/validationHandler"));
 const router = (0, express_1.Router)();
+router.get("/info", requiredAuth_1.default, (req, res) => {
+    res.json({
+        user: req.user,
+        profile: req.userProfile,
+    });
+});
 router.get("/callback", (0, express_validator_1.query)("code").isString(), validationHandler_1.default, (0, errorHandler_1.use)(authController_1.CallbackController));
 router.post("/log_out", (0, express_validator_1.body)("refreshToken").isJWT(), validationHandler_1.default, (0, errorHandler_1.use)(authController_1.LogOutController));
 router.post("/refresh_token", (0, express_validator_1.body)("refreshToken").isJWT(), validationHandler_1.default, (0, errorHandler_1.use)(authController_1.RefreshTokenController));

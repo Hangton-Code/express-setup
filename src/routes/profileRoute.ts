@@ -12,10 +12,6 @@ import { use } from "../helpers/errorHandler";
 
 const router = Router();
 
-router.get("/me", requiredAuth, (req, res) => {
-  res.json({ ...req.user.toJSON(), refreshTokens: [] } as UserType);
-});
-
 router.patch(
   "/edit",
   requiredAuth,

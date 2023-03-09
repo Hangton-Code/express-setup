@@ -24,7 +24,7 @@ const EMAIL_VERIFICATION_URL = `${process.env.CLIENT_URL}/auth/email_verificatio
 function CallbackController(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const code = req.query.code;
-        const auth0User = yield (0, auth0_1.getAuth0UserInfo)(code);
+        const auth0User = yield (0, auth0_1.getAuth0UserInfoByCode)(code);
         // if email is not verified
         if (!auth0User.email_verified) {
             const veToken = jsonwebtoken_1.default.sign({
@@ -41,9 +41,6 @@ function CallbackController(req, res) {
             where: { id: auth0User.sub },
             defaults: {
                 id: auth0User.sub,
-                avatar_url: auth0User.picture,
-                email: auth0User.email,
-                name: auth0User.name,
                 refreshTokens: [],
             },
         });
